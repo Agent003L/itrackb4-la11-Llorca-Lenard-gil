@@ -1,13 +1,13 @@
 <?php
+
 use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/movies', [MovieController::class, 'index']);
-Route::get('/whoami', function () {
-    return 'Lenard Gil B. Llorca | 2023-71036 | Block 4A | ITRACKB4 Laravel 12';
-});
 
-Route::get('/movies', [MovieController::class, 'index']);
+Route::get('/movies', [MovieController::class, 'index'])->name('movies.index');
+Route::get('/movies/featured', [MovieController::class, 'featured'])->name('movies.featured');
+Route::get('/movies/filter/{value?}', [MovieController::class, 'filter'])->name('movies.filter');
+Route::get('/movies/{id}', [MovieController::class, 'show'])->name('movies.show');
