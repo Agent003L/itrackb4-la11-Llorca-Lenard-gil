@@ -1,20 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Featured Movie</title>
-</head>
-<body>
-    <h1>Featured Movie</h1>
-    <p>Prepared by: Lenard Gil B. Llorca</p>
-
-    <h2>{{ $movie['title'] }}</h2>
-    <p><strong>Genre:</strong> {{ $movie['genre'] }}</p>
-    <p><strong>Year:</strong> {{ $movie['year'] }}</p>
-    <p><strong>Director:</strong> {{ $movie['director'] }}</p>
-    <p><strong>Rating:</strong> {{ $movie['rating'] }}</p>
+@extends ('layouts.app')
+@section('title', 'Featured Movie')
+@section('content')
+<h1>Featured Movie</h1>
+    
+<table class="table table-bordered table-striped">
+        <tr class="table-dark">
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td><strong>Title:</strong></td>
+            <td>{{ $movie['title'] }}</td>
+        </tr>
+        <tr>
+            <td><strong>Genre:</strong></td>
+            <td>{{ $movie['genre'] }}</td>
+        </tr>
+        <tr>
+            <td><strong>Year:</strong></td>
+            <td>{{ $movie['year'] }}</td>
+        </tr>
+        <tr>
+            <td><strong>Director:</strong></td>
+            <td>{{ $movie['director'] }}</td>
+        </tr>
+        <tr>
+            <td><strong>Rating:</strong></td>
+            <td>{{ $movie['rating'] }}</td>
+        </tr>
+    </table>
 
     <p>
         <a href="{{ route('movies.index') }}">Back to Movies List</a>
     </p>
-</body>
-</html>
+@endsection
+
