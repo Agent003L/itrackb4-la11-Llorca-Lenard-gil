@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Movie Filter</title>
-</head>
-<body>
+@extends ('layouts.app')
+@section('title', 'Movie Filter')
+@section('content')
     <h1>Movie Filter</h1>
-    <p>Prepared by: Lenard Gil B. Llorca</p>
-
+  
     <p><strong>{{ $filterMessage }}</strong></p>
 
     @if ($activeFilter)
@@ -19,22 +15,25 @@
         <a href="{{ route('movies.index') }}">Back to Movies List</a>
     </p>
 
-    <table border="1" cellpadding="8">
-        <tr>
+    <table class="table table-bordered table-striped">
+        <tr class="table-dark">
             <th>ID</th>
             <th>Title</th>
             <th>Genre</th>
             <th>Year</th>
+            <th>Action</th>
         </tr>
 
         @foreach ($movies as $movie)
             <tr>
-                <td>{{ $movie['id'] }}</td>
-                <td><a href="{{ route('movies.show', ['id' => $movie['id']]) }}">{{ $movie['title'] }}</a></td>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $movie['title'] }}</a></td>
                 <td>{{ $movie['genre'] }}</td>
                 <td>{{ $movie['year'] }}</td>
+                <td><a href="{{ route('movies.show', ['id' => $movie['id']]) }}">View Details</a></td>
             </tr>
         @endforeach
-    </table>
-</body>
-</html>
+    </table>    
+
+@endsection
+
