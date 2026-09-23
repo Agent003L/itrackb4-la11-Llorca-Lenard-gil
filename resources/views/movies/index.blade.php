@@ -2,6 +2,32 @@
 @section('title', 'My Movie list')
 @section('content')
  <h3>My Movies List</h3>
+
+    <p>
+        Active filters:
+        @if ($activeGenre !== null || $activeYear !== null)
+            @if ($activeGenre !== null) Genre: {{ $activeGenre }} @endif
+            @if ($activeYear !== null) Year: {{ $activeYear }} @endif
+        @else
+            None
+        @endif
+    </p>
+
+    <p>
+        Genres:
+        @foreach ($genres as $availableGenre)
+            <a href="{{ route('movies.index', ['genre' => $availableGenre, 'year' => $activeYear]) }}">{{ $availableGenre }}</a>
+        @endforeach
+    </p>
+
+    <p>
+        Years:
+        @foreach ($years as $availableYear)
+            <a href="{{ route('movies.index', ['genre' => $activeGenre, 'year' => $availableYear]) }}">{{ $availableYear }}</a>
+        @endforeach
+    </p>
+
+    <p><a href="{{ route('movies.index') }}">Clear filters</a></p>
  
     <table class="table table-bordered table-striped">
         <tr class="table-dark">

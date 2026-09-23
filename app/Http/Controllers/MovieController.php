@@ -10,61 +10,70 @@ class MovieController extends Controller
     {
         return [
             [
-                'id' => 1,
-                'title' => 'Inception',
-                'genre' => 'Sci-Fi',
-                'year' => 2010,
-                'director' => 'Christopher Nolan',
-                'rating' => 8.8,
+                'id' => 1,'title' => 'Inception','genre' => 'Sci-Fi','year' => 2010,'director' => 'Christopher Nolan','rating' => 8.8,
             ],
             [
-                'id' => 2,
-                'title' => 'The Dark Knight',
-                'genre' => 'Action',
-                'year' => 2008,
-                'director' => 'Christopher Nolan',
-                'rating' => 9.0,
+                'id' => 2,'title' => 'The Dark Knight','genre' => 'Action','year' => 2008,'director' => 'Christopher Nolan','rating' => 9.0,
             ],
             [
-                'id' => 3,
-                'title' => 'Interstellar',
-                'genre' => 'Sci-Fi',
-                'year' => 2014,
-                'director' => 'Christopher Nolan',
-                'rating' => 8.7,
+                'id' => 3,'title' => 'Interstellar','genre' => 'Sci-Fi','year' => 2014,'director' => 'Christopher Nolan','rating' => 8.7,
             ],
             [
-                'id' => 4,
-                'title' => 'The Matrix',
-                'genre' => 'Sci-Fi',
-                'year' => 1999,
-                'director' => 'The Wachowskis',
-                'rating' => 8.7,
+                'id' => 4,'title' => 'The Matrix','genre' => 'Sci-Fi','year' => 1999,'director' => 'The Wachowskis','rating' => 8.7,
             ],
             [
-                'id' => 5,
-                'title' => 'The Godfather',
-                'genre' => 'Crime',
-                'year' => 1972,
-                'director' => 'Francis Ford Coppola',
-                'rating' => 9.2,
+                'id' => 5,'title' => 'The Godfather','genre' => 'Crime','year' => 1972,'director' => 'Francis Ford Coppola','rating' => 9.2,
             ],
             [
-                'id' => 6,
-                'title' => 'Spider-Man: Into the Spider-Verse',
-                'genre' => 'Animation',
-                'year' => 2018,
-                'director' => 'Bob Persichetti',
-                'rating' => 8.4,
+                'id' => 6,'title' => 'Spider-Man: Into the Spider-Verse','genre' => 'Animation','year' => 2018,'director' => 'Bob Persichetti','rating' => 8.4,
             ],
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $movies = $this->getMovies();
+        $genre = $request->query('genre');
+        $year = $request->query('year');
+        $allMovies = $this->getMovies();
+        $genres = [];
+        $years = [];
 
-        return view('movies.index', ['movies' => $movies]);
+        foreach ($allMovies as $movie) {
+            if (! in_array($movie['genre'], $genres, true)) {
+                $genres[] = $movie['genre'];
+            }
+
+            if (! in_array($movie['year'], $years, true)) {
+                $years[] = $movie['year'];
+            }
+        }
+
+        $movies = [];
+        foreach ($allMovies as $movie) {
+            if ($genre !== null && $year !== null) {
+                if (strtolower($movie['genre']) === strtolower($genre) && (string) $movie['year'] === (string) $year) {
+                    $movies[] = $movie;
+                }
+            } elseif ($genre !== null) {
+                if (strtolower($movie['genre']) === strtolower($genre)) {
+                    $movies[] = $movie;
+                }
+            } elseif ($year !== null) {
+                if ((string) $movie['year'] === (string) $year) {
+                    $movies[] = $movie;
+                }
+            } else {
+                $movies[] = $movie;
+            }
+        }
+
+        return view('movies.index', [
+            'movies' => $movies,
+            'genres' => $genres,
+            'years' => $years,
+            'activeGenre' => $genre,
+            'activeYear' => $year,
+        ]);
     }
 
     public function show($id)
@@ -84,29 +93,6 @@ class MovieController extends Controller
         abort_if(! $movie, 404);
 
         return view('movies.featured', ['movie' => $movie]);
-    }
-
-    public function filter($value = null)
-    {
-        $movies = $this->getMovies();
-
-        if ($value === null || $value === '') {
-            return view('movies.filter', [
-                'movies' => $movies,
-                'activeFilter' => null,
-                'filterMessage' => 'All movies are being shown',
-            ]);
-        }
-
-        $filteredMovies = array_values(array_filter($movies, function ($movie) use ($value) {
-            return strtolower((string) $movie['genre']) === strtolower((string) $value);
-        }));
-
-        return view('movies.filter', [
-            'movies' => $filteredMovies,
-            'activeFilter' => $value,
-            'filterMessage' => 'Showing movies for genre: ' . $value,
-        ]);
     }
 
     /**

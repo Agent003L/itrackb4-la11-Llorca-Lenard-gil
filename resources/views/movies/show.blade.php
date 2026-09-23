@@ -40,4 +40,3 @@
         <a href="{{ route('movies.index') }}">Back to Movies List</a>
     </p>
 @endsection
-
