@@ -6,35 +6,24 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    private function getMovies(): array
-    {
-        return [
-            [
-                'id' => 1,'title' => 'Inception','genre' => 'Sci-Fi','year' => 2010,'director' => 'Christopher Nolan','rating' => 8.8,
-            ],
-            [
-                'id' => 2,'title' => 'The Dark Knight','genre' => 'Action','year' => 2008,'director' => 'Christopher Nolan','rating' => 9.0,
-            ],
-            [
-                'id' => 3,'title' => 'Interstellar','genre' => 'Sci-Fi','year' => 2014,'director' => 'Christopher Nolan','rating' => 8.7,
-            ],
-            [
-                'id' => 4,'title' => 'The Matrix','genre' => 'Sci-Fi','year' => 1999,'director' => 'The Wachowskis','rating' => 8.7,
-            ],
-            [
-                'id' => 5,'title' => 'The Godfather','genre' => 'Crime','year' => 1972,'director' => 'Francis Ford Coppola','rating' => 9.2,
-            ],
-            [
-                'id' => 6,'title' => 'Spider-Man: Into the Spider-Verse','genre' => 'Animation','year' => 2018,'director' => 'Bob Persichetti','rating' => 8.4,
-            ],
-        ];
-    }
+ private function movies(): array
+{
+    return json_decode(file_get_contents(storage_path('app/movies.json')), true);
+}
+
+private function saveMovies(array $movies): void
+{
+    file_put_contents(
+        storage_path('app/movies.json'),
+        json_encode($movies, JSON_PRETTY_PRINT)
+    );
+}
 
     public function index(Request $request)
     {
         $genre = $request->query('genre');
         $year = $request->query('year');
-        $allMovies = $this->getMovies();
+        $allMovies = $this->movies();
         $genres = [];
         $years = [];
 
@@ -78,7 +67,7 @@ class MovieController extends Controller
 
     public function show($id)
     {
-        $movie = collect($this->getMovies())->firstWhere('id', (int) $id);
+        $movie = collect($this->movies())->firstWhere('id', (int) $id);
 
         abort_if(! $movie, 404);
 
@@ -87,7 +76,7 @@ class MovieController extends Controller
 
     public function featured()
     {
-        $movies = $this->getMovies();
+        $movies = $this->movies();
         $movie = collect($movies)->firstWhere('id', 3);
 
         abort_if(! $movie, 404);
@@ -100,17 +89,35 @@ class MovieController extends Controller
      */
     public function create()
     {
-        //
+        return view('movies.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+ public function store(Request $request)
+{
+    $validated = $request->validate([
+        'title'    => 'required|max:100',
+        'genre'    => 'required|in:Sci-Fi,Action,Crime,Animation',
+        'year'     => 'required|numeric|min:1900|max:2100',
+        'director' => 'required|max:100',
+        'rating'   => 'required|numeric|min:0|max:10',
+    ]);
 
+    $movies = $this->movies();
+
+    $ids = array_column($movies, 'id');
+    $validated['id']     = $ids ? max($ids) + 1 : 1;
+    $validated['year']   = (int) $validated['year'];
+    $validated['rating'] = (float) $validated['rating'];
+
+    $movies[] = $validated;
+    $this->saveMovies($movies);
+
+    return redirect()->route('movies.index')
+        ->with('success', 'Movie added successfully.');
+}
     /**
      * Show the form for editing the specified resource.
      */

@@ -1,37 +1,24 @@
-@extends ('layouts.app')
+@extends('layouts.app')
 @section('title', 'Featured Movie')
 @section('content')
-<h1>Featured Movie</h1>
-    
-<table class="table table-bordered table-striped">
-        <tr class="table-dark">
-            <th>Field</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td><strong>Title:</strong></td>
-            <td>{{ $movie['title'] }}</td>
-        </tr>
-        <tr>
-            <td><strong>Genre:</strong></td>
-            <td>{{ $movie['genre'] }}</td>
-        </tr>
-        <tr>
-            <td><strong>Year:</strong></td>
-            <td>{{ $movie['year'] }}</td>
-        </tr>
-        <tr>
-            <td><strong>Director:</strong></td>
-            <td>{{ $movie['director'] }}</td>
-        </tr>
-        <tr>
-            <td><strong>Rating:</strong></td>
-            <td>{{ $movie['rating'] }}</td>
-        </tr>
-    </table>
 
-    <p>
-        <a href="{{ route('movies.index') }}">Back to Movies List</a>
-    </p>
+<div class="card shadow-sm border-warning">
+    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">&#9733; Featured: {{ $movie['title'] }}</h4>
+        <span class="badge bg-dark fs-6">{{ $movie['rating'] }}</span>
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex"><strong class="w-25">Title</strong><span>{{ $movie['title'] }}</span></li>
+        <li class="list-group-item d-flex"><strong class="w-25">Genre</strong><span>{{ $movie['genre'] }}</span></li>
+        <li class="list-group-item d-flex"><strong class="w-25">Year</strong><span>{{ $movie['year'] }}</span></li>
+        <li class="list-group-item d-flex"><strong class="w-25">Director</strong><span>{{ $movie['director'] }}</span></li>
+        <li class="list-group-item d-flex"><strong class="w-25">Rating</strong><span>{{ $movie['rating'] }}</span></li>
+    </ul>
+
+    <div class="card-footer">
+        <a href="{{ route('movies.index') }}" class="btn btn-outline-secondary btn-sm">&larr; Back to Movies List</a>
+    </div>
+</div>
+
 @endsection
-

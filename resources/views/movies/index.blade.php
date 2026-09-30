@@ -1,56 +1,86 @@
-@extends ('layouts.app')
+@extends('layouts.app')
 @section('title', 'My Movie list')
 @section('content')
- <h3>My Movies List</h3>
 
-    <p>
-        Active filters:
-        @if ($activeGenre !== null || $activeYear !== null)
-            @if ($activeGenre !== null) Genre: {{ $activeGenre }} @endif
-            @if ($activeYear !== null) Year: {{ $activeYear }} @endif
-        @else
-            None
-        @endif
-    </p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">My Movies List</h3>
+    <a class="btn btn-primary" href="{{ route('movies.create') }}">+ Add Movie</a>
+</div>
 
-    <p>
-        Genres:
-        @foreach ($genres as $availableGenre)
-            <a href="{{ route('movies.index', ['genre' => $availableGenre, 'year' => $activeYear]) }}">{{ $availableGenre }}</a>
-        @endforeach
-    </p>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
 
-    <p>
-        Years:
-        @foreach ($years as $availableYear)
-            <a href="{{ route('movies.index', ['genre' => $activeGenre, 'year' => $availableYear]) }}">{{ $availableYear }}</a>
-        @endforeach
-    </p>
+        <p class="mb-3">
+            <span class="fw-bold">Active filters:</span>
+            @if ($activeGenre !== null || $activeYear !== null)
+                @if ($activeGenre !== null)
+                    <span class="badge bg-primary">Genre: {{ $activeGenre }}</span>
+                @endif
+                @if ($activeYear !== null)
+                    <span class="badge bg-primary">Year: {{ $activeYear }}</span>
+                @endif
+            @else
+                <span class="text-muted">None</span>
+            @endif
+        </p>
 
-    <p><a href="{{ route('movies.index') }}">Clear filters</a></p>
- 
-    <table class="table table-bordered table-striped">
-        <tr class="table-dark">
-            <th>ID</th>
+        <div class="mb-2">
+            <span class="fw-bold me-2">Genres:</span>
+            @foreach ($genres as $availableGenre)
+                <a href="{{ route('movies.index', ['genre' => $availableGenre, 'year' => $activeYear]) }}"
+                   class="btn btn-sm {{ (string) $activeGenre === (string) $availableGenre ? 'btn-primary' : 'btn-outline-primary' }}">
+                    {{ $availableGenre }}
+                </a>
+            @endforeach
+        </div>
+
+        <div class="mb-3">
+            <span class="fw-bold me-2">Years:</span>
+            @foreach ($years as $availableYear)
+                <a href="{{ route('movies.index', ['genre' => $activeGenre, 'year' => $availableYear]) }}"
+                   class="btn btn-sm {{ (string) $activeYear === (string) $availableYear ? 'btn-primary' : 'btn-outline-primary' }}">
+                    {{ $availableYear }}
+                </a>
+            @endforeach
+        </div>
+
+        <a href="{{ route('movies.index') }}" class="btn btn-sm btn-outline-danger">Clear filters</a>
+    </div>
+</div>
+
+<table class="table table-hover table-striped align-middle shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th style="width: 70px;">ID</th>
             <th>Title</th>
             <th>Genre</th>
             <th>Year</th>
-            <th>Action</th>
+            <th class="text-end">Action</th>
         </tr>
-
-        @foreach ($movies as $movie)
+    </thead>
+    <tbody>
+        @forelse ($movies as $movie)
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>
                     {{ $movie['title'] }}
-                    @if($movie['rating'] >= 9)
-                        <span style="color: green;">(Highly Rated)</span>
+                    @if (($movie['rating'] ?? 0) >= 9)
+                        <span class="badge bg-success ms-1">Highly Rated</span>
                     @endif
                 </td>
-                <td>{{ $movie['genre'] }}</td>
+                <td><span class="badge bg-secondary">{{ $movie['genre'] }}</span></td>
                 <td>{{ $movie['year'] }}</td>
-                <td><a href="{{ route('movies.show', ['id' => $movie['id']]) }}">View Details</a></td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-dark"
+                       href="{{ route('movies.show', ['id' => $movie['id']]) }}">View Details</a>
+                </td>
             </tr>
-        @endforeach
-    </table>
+        @empty
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">No movies match these filters.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
 @endsection

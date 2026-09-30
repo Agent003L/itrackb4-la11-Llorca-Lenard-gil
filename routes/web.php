@@ -22,6 +22,6 @@ Route::get('/movies/filter/{value?}', function ($value = null) {
     ->name('movies.filter');
     
 Route::resource('movies', MovieController::class)
-    ->only(['index', 'show'])
+    ->only(['index', 'create', 'store', 'show'])
     ->parameters(['movies' => 'id']);
 
