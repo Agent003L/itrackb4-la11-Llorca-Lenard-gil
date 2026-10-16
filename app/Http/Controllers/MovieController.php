@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Movie;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
@@ -19,59 +19,56 @@ private function saveMovies(array $movies): void
     );
 }
 
-    public function index(Request $request)
-    {
-        $genre = $request->query('genre');
-        $year = $request->query('year');
-        $allMovies = $this->movies();
-        $genres = [];
-        $years = [];
+public function index(Request $request)
+{
+    $genre = $request->query('genre');
+    $year = $request->query('year');
+    $allMovies = Movie::all();      // the only line that changed
+    $genres = [];
+    $years = [];
 
-        foreach ($allMovies as $movie) {
-            if (! in_array($movie['genre'], $genres, true)) {
-                $genres[] = $movie['genre'];
-            }
-
-            if (! in_array($movie['year'], $years, true)) {
-                $years[] = $movie['year'];
-            }
+    foreach ($allMovies as $movie) {
+        if (! in_array($movie['genre'], $genres, true)) {
+            $genres[] = $movie['genre'];
         }
 
-        $movies = [];
-        foreach ($allMovies as $movie) {
-            if ($genre !== null && $year !== null) {
-                if (strtolower($movie['genre']) === strtolower($genre) && (string) $movie['year'] === (string) $year) {
-                    $movies[] = $movie;
-                }
-            } elseif ($genre !== null) {
-                if (strtolower($movie['genre']) === strtolower($genre)) {
-                    $movies[] = $movie;
-                }
-            } elseif ($year !== null) {
-                if ((string) $movie['year'] === (string) $year) {
-                    $movies[] = $movie;
-                }
-            } else {
+        if (! in_array($movie['year'], $years, true)) {
+            $years[] = $movie['year'];
+        }
+    }
+
+    $movies = [];
+    foreach ($allMovies as $movie) {
+        if ($genre !== null && $year !== null) {
+            if (strtolower($movie['genre']) === strtolower($genre) && (string) $movie['year'] === (string) $year) {
                 $movies[] = $movie;
             }
+        } elseif ($genre !== null) {
+            if (strtolower($movie['genre']) === strtolower($genre)) {
+                $movies[] = $movie;
+            }
+        } elseif ($year !== null) {
+            if ((string) $movie['year'] === (string) $year) {
+                $movies[] = $movie;
+            }
+        } else {
+            $movies[] = $movie;
         }
-
-        return view('movies.index', [
-            'movies' => $movies,
-            'genres' => $genres,
-            'years' => $years,
-            'activeGenre' => $genre,
-            'activeYear' => $year,
-        ]);
     }
+
+    return view('movies.index', [
+        'movies' => $movies,
+        'genres' => $genres,
+        'years' => $years,
+        'activeGenre' => $genre,
+        'activeYear' => $year,
+    ]);
+}
 
     public function show($id)
     {
-        $movie = collect($this->movies())->firstWhere('id', (int) $id);
-
-        abort_if(! $movie, 404);
-
-        return view('movies.show', ['movie' => $movie]);
+    $movie = Movie::findOrFail($id);
+    return view('movies.show', compact('movie'));
     }
 
     public function featured()

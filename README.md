@@ -1,19 +1,13 @@
-# Laboratory Activity 6: Two Filters, One Route
+# LA9: Your Own Table, Your Own Model
 
-## Q1
+## F1: Nullable column
 
-I did not need a new route because the router only looks at the path, such as `/movies`, when choosing the route. The `genre` and `year` values are query-string data attached after the path. The existing `movies.index` route therefore handles the unfiltered list and every filtered version.
+I made `notes` the nullable column in my `movies` table. A movie is still a complete record with just a title, director, genre, year and watched status, and not every movie needs a personal comment. The other columns are what my list page, filters and detail page depend on, so leaving any of them empty would break the display.
 
-## Q2
+## F2: First failure
 
-If both filters were route parameters, a year-only URL would need a placeholder for the missing genre, such as `/movies/genre/year/4` or another specially designed route shape. That would require more route definitions or awkward placeholder values. Query strings are simpler because `year=2014` can be supplied without inventing a missing genre value.
+The first step that failed was `php artisan migrate`, with the error `SQLSTATE[HY000]: General error: 1 table "movies" already exists`. A `movies` table was already in my `database.sqlite` from earlier work, so Laravel refused to create it a second time. I fixed it by clearing the old table with `php artisan migrate:fresh` and running my migration again. Later, adding `$fillable` was prompted by the expected `MassAssignmentException` in Tinker.
 
-## Q3
+## F3: Why the Blade files still work
 
-The navigation pattern needed to account for the longer detail path so the Movies link remains active on `/movies/2`. The filtered list needed no separate pattern change because its path is still `/movies`; only its query string changes. Checking the current path therefore keeps the same navigation item marked when a filter is applied.
-
-## Q4
-
-The old filter method was replaced by the index method, so leaving it would create a second dead filtering implementation. I kept the empty `store` and `update` methods because they represent unfinished resource actions that will be implemented later. The old filter view was also deleted because the redirect now sends visitors to the index page instead of rendering it.
-
-
+The Blade files never read the JSON file or the database. They only receive variables from the controller (`$movies`, `$genres`, `$years`, `$activeGenre`, `$activeYear`) and read properties like `title`, `genre` and `year` from each item. Since my table uses the same column names as the old JSON keys and the controller passes the same variable names, the Blade files can't tell the data now comes from the Eloquent `Movie` model.
