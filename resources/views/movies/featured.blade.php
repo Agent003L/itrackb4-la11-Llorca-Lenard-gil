@@ -10,7 +10,7 @@
 
     <ul class="list-group list-group-flush">
         <li class="list-group-item d-flex"><strong class="w-25">Title</strong><span>{{ $movie['title'] }}</span></li>
-        <li class="list-group-item d-flex"><strong class="w-25">Genre</strong><span>{{ $movie['genre'] }}</span></li>
+        <li class="list-group-item d-flex"><strong class="w-25">Genre</strong><span>{{ $movie->genre->name }}</span></li>
         <li class="list-group-item d-flex"><strong class="w-25">Year</strong><span>{{ $movie['year'] }}</span></li>
         <li class="list-group-item d-flex"><strong class="w-25">Director</strong><span>{{ $movie['director'] }}</span></li>
         <li class="list-group-item d-flex"><strong class="w-25">Rating</strong><span>{{ $movie['rating'] }}</span></li>

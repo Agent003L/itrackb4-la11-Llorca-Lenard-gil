@@ -26,11 +26,9 @@
 
         <div class="mb-2">
             <span class="fw-bold me-2">Genres:</span>
-            @foreach ($genres as $availableGenre)
-                <a href="{{ route('movies.index', ['genre' => $availableGenre, 'year' => $activeYear]) }}"
-                   class="btn btn-sm {{ (string) $activeGenre === (string) $availableGenre ? 'btn-primary' : 'btn-outline-primary' }}">
-                    {{ $availableGenre }}
-                </a>
+            @foreach ($genres as $g)
+                <a href="{{ request()->fullUrlWithQuery(['genre' => $g->id]) }}"
+                class="btn btn-outline-primary btn-sm">{{ $g->name }}</a>
             @endforeach
         </div>
 
@@ -68,7 +66,7 @@
                         <span class="badge bg-success ms-1">Highly Rated</span>
                     @endif
                 </td>
-                <td><span class="badge bg-secondary">{{ $movie['genre'] }}</span></td>
+                <td><span class="badge bg-secondary">{{ $movie->genre->name }}</span></td>
                 <td>{{ $movie['year'] }}</td>
                 <td class="text-end">
                     <a class="btn btn-sm btn-outline-dark"

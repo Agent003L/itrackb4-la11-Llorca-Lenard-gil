@@ -16,7 +16,7 @@
             <strong class="w-25">Title</strong><span>{{ $movie['title'] }}</span>
         </li>
         <li class="list-group-item d-flex">
-            <strong class="w-25">Genre</strong><span>{{ $movie['genre'] }}</span>
+            <strong class="w-25">Genre</strong><span>{{ $movie->genre->name }}</span>
         </li>
         <li class="list-group-item d-flex">
             <strong class="w-25">Year</strong><span>{{ $movie['year'] }}</span>
