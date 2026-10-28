@@ -7,6 +7,7 @@ use App\Models\Movie;
 use Illuminate\Http\Request;
 
 
+
 class MovieController extends Controller
 {
     public function index(Request $request)
@@ -37,15 +38,17 @@ class MovieController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(Movie $movie)
     {
-        $movie = Movie::findOrFail($id);
         return view('movies.show', compact('movie'));
     }
 
     public function featured()
     {
-        $movie = Movie::findOrFail(3);
+        $movie = Movie::find(3);
+
+        abort_if(! $movie, 404);
+
         return view('movies.featured', ['movie' => $movie]);
     }
 
@@ -70,18 +73,33 @@ class MovieController extends Controller
         return redirect('/movies');
     }
 
-    public function edit($id)
+    public function edit(Movie $movie)
     {
-        //
+        $genres = Genre::all();
+
+        return view('movies.edit', compact('movie', 'genres'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Movie $movie)
     {
-        //
+        $validated = $request->validate([
+            'title'      => 'required|string|max:255',
+            'director'   => 'required|string|max:255',
+            'genre_id'   => 'required|exists:genres,id',
+            'year'       => 'required|integer|min:1888|max:2100',
+            'is_watched' => 'required|boolean',
+            'notes'      => 'nullable|string',
+        ]);
+
+        $movie->update($validated);
+
+        return redirect()->route('movies.index');
     }
 
-    public function destroy($id)
+    public function destroy(Movie $movie)
     {
-        //
+        $movie->delete();
+
+        return redirect()->route('movies.index');
     }
 }

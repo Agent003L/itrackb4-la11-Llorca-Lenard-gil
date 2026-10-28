@@ -70,7 +70,16 @@
                 <td>{{ $movie['year'] }}</td>
                 <td class="text-end">
                     <a class="btn btn-sm btn-outline-dark"
-                       href="{{ route('movies.show', ['id' => $movie['id']]) }}">View Details</a>
+                      <a class="btn btn-sm btn-outline-dark"
+                        href="{{ route('movies.show', $movie) }}">View Details</a>
+                       <a href="{{ route('movies.edit', $movie) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                        <form action="{{ route('movies.destroy', $movie) }}" method="POST"
+                            class="d-inline"
+                            onsubmit="return confirm('Delete this record?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                 </td>
             </tr>
         @empty

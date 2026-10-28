@@ -1,13 +1,13 @@
-# LA10: Your Own Lookup Table
+# LA11: Finish Your Own CRUD
 
-## G1: Lookup table
+## G1: Route model binding
 
-I turned `genre` into its own `genres` table. A movie's genre comes from a fixed list, values like Sci-Fi and Animation repeat across several movies, and a genre could later get details of its own. Columns like `year` and `is_watched` are just values, not things.
+Binding needs two things: the controller parameter is type-hinted with the model (`Movie $movie`), and its name matches the route segment `{movie}`. With the type-hint but a wrong name, Laravel can't match a record and hands my method an empty `Movie` object, so my edit form opens blank. With the right name but no type-hint, I only get the raw id from the URL, not a record.
 
-## G2: Screenshot 6
+## G2: Delete link
 
-Screenshot 6 showed 9 queries for my 8 movies. The page ran 1 query to load the movies, then 1 extra query per movie to fetch its genre name, which is 1 + 8. After adding `with('genre')`, it dropped to 2.
+My Delete link goes to `/movies/{id}`, which is the right address, but a link can only send a GET request. In my project that address answered as the show route, not destroy, because destroy only answers the DELETE verb. I needed a form with `@method('DELETE')` to send the correct verb.
 
-## G3: Plural belongsTo
+## G3: old() second argument
 
-Eloquent builds the foreign key column name from the method name. If `genre()` were named `genres()`, it would look for a `genres_id` column in `movies`, which doesn't exist, and `$movie->genre->name` in my views would fail because there would be no `genre` relationship.
+On my edit form, `old('title', $movie->title)` shows the typed value after a failed submit, and the saved value otherwise. Without the second argument, the form opens empty, as in my screenshot 3. With only the second argument (no `old()`), a rejected edit would throw away what I typed and bring back the original title.
